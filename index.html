@@ -2281,9 +2281,12 @@ const SITE_URL = "https://trust.chip50.org/";
 function citation() {
   const y0 = WAVES[0].mid.getFullYear(), y1 = WAVES.at(-1).mid.getFullYear(), built = D.meta.built.slice(0, 4);
   const today = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  // Authors in the order Katya set: herself first, then the other PIs and Uslu alphabetically.
+  const authors = "Ognyanova, K., Baum, M. A., Druckman, J. N., Lazer, D., Perlis, R. H., Santillana, M., & Uslu, A.";
+  const bibAuthors = "Ognyanova, K. and Baum, M. A. and Druckman, J. N. and Lazer, D. and Perlis, R. H. and Santillana, M. and Uslu, A.";
   return {
-    text: `CHIP50: The Civic Health and Institutions Project. (${built}). CHIP50 Trust Tracker: Trust in institutions and public figures, ${y0}–${y1} [Interactive dashboard]. ${SITE_URL} (accessed ${today}).`,
-    bibtex: `@misc{chip50_trust_${built},\n  author = {{CHIP50: The Civic Health and Institutions Project}},\n  title = {CHIP50 Trust Tracker: Trust in Institutions and Public Figures, ${y0}--${y1}},\n  year = {${built}},\n  howpublished = {Interactive dashboard},\n  url = {${SITE_URL}},\n  note = {Accessed ${today}}\n}`
+    text: `${authors} (${built}). CHIP50 Trust Tracker: Trust in institutions and public figures, ${y0}–${y1} [Interactive dashboard]. CHIP50: The Civic Health and Institutions Project. ${SITE_URL} (accessed ${today}).`,
+    bibtex: `@misc{chip50_trust_${built},\n  author = {${bibAuthors}},\n  organization = {CHIP50: The Civic Health and Institutions Project},\n  title = {CHIP50 Trust Tracker: Trust in Institutions and Public Figures, ${y0}--${y1}},\n  year = {${built}},\n  howpublished = {Interactive dashboard},\n  url = {${SITE_URL}},\n  note = {Accessed ${today}}\n}`
   };
 }
 // Fill a box with the citation, a note on citing one figure, and copy buttons.
