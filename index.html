@@ -13,53 +13,72 @@
 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <style>
+/* Colors follow the State of the Prompt palette (stateoftheprompt.net): its ink, rule,
+   mist and paper; scarlet as the accent; data-blue and data-red as the main pair; and
+   its subject hues, stepped darker so lines and marks pass the colorblind and contrast
+   checks on white (light) and near-black (dark). Categorical order, light:
+   data-blue, orange, teal, data-red, green, mauve, gold, rose. */
 :root {
   color-scheme: light;
-  --page: #f6f5f2;
-  --surface: #fcfcfb;
-  --surface-2: #f0efec;
-  --ink: #0b0b0b;
-  --ink-2: #52514e;
-  --muted: #7d7b75;
-  --grid: #e4e3dc;
-  --axis: #c3c2b7;
-  --border: rgba(11,11,11,0.10);
-  --accent: #8b1a1a;
-  --accent-soft: #f4e4e2;
-  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100;
-  --s5: #e87ba4; --s6: #008300; --s7: #6250d6; --s8: #e34948;
-  --dem: #2a78d6; --rep: #e34948; --ind: #1baf7a;
-  --c1: #b8322f; --c2: #eea29e; --c3: #93bdf0; --c4: #1f5fb0;
-  --na: #e8e7e2;
-  --good: #006300; --bad: #b8322f;
-  --shadow: 0 1px 2px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.04);
+  --page: #f3f3f3;
+  --surface: #ffffff;
+  --surface-2: #f3f4f6;
+  --ink: #13233a;
+  --ink-2: #595959;
+  --muted: #6b6b6b;
+  --grid: #e8e8e8;
+  --axis: #bfbfbf;
+  --div-neg: #c24362; --div-mid: #f2f2f2; --div-pos: #0e77a4;
+  --border: rgba(19,35,58,0.12);
+  --accent: #cc0033;
+  --accent-soft: #fbe5eb;
+  --s1: #0e77a4; --s2: #d97c00; --s3: #2b9b81; --s4: #b00b33;
+  --s5: #7a9a2e; --s6: #8e4f86; --s7: #c49800; --s8: #d65a6e;
+  --dem: #0e77a4; --rep: #b00b33; --ind: #d97c00;
+  --c1: #b00b33; --c2: #d88599; --c3: #86bbd2; --c4: #0e77a4;
+  --ramp-lo: #dcecf4; --ramp-mid: #0e77a4; --ramp-hi: #08364d;
+  --ramp2-lo: #f6dde3; --ramp2-mid: #b00b33; --ramp2-hi: #5c0019;
+  --na: #e8e8e8;
+  --good: #1d7a3a; --bad: #b00b33;
+  --on-accent: #ffffff; --accent-bg: #cc0033;
+  --shadow: 0 1px 2px rgba(19,35,58,0.05), 0 2px 8px rgba(19,35,58,0.05);
 }
+/* Dark mode: neutral grays and near-black with the scarlet accent (Katya: "gray/black and
+   red"), the data colors stepped lighter and checked on #181818. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --page: #0f0f0e; --surface: #1a1a19; --surface-2: #242422;
-    --ink: #f0efec; --ink-2: #c3c2b7; --muted: #8f8d86;
-    --grid: #2c2c2a; --axis: #45453f; --border: rgba(255,255,255,0.10);
-    --accent: #e0726b; --accent-soft: #3a2220;
-    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500;
-    --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767;
-    --dem: #3987e5; --rep: #e66767; --ind: #199e70;
-    --c1: #d0504c; --c2: #7d3a37; --c3: #34598a; --c4: #5a9be8;
-    --na: #2a2a28; --good: #0ca30c; --bad: #e66767;
+    --page: #0e0e0e; --surface: #181818; --surface-2: #222222;
+    --ink: #ededed; --ink-2: #b4b4b4; --muted: #8c8c8c;
+    --grid: #2a2a2a; --axis: #474747; --border: rgba(255,255,255,0.10);
+    --div-neg: #d0566f; --div-mid: #2c2c2c; --div-pos: #3490be;
+    --accent: #e8455e; --accent-soft: #3a1c22; --accent-bg: #cc0033;
+    --s1: #3490be; --s2: #d37903; --s3: #16957b; --s4: #c42a43;
+    --s5: #83a339; --s6: #9d5d95; --s7: #b48c08; --s8: #cf5468;
+    --dem: #3490be; --rep: #c42a43; --ind: #d37903;
+    --c1: #c42a43; --c2: #6b2d38; --c3: #26495f; --c4: #3490be;
+    --ramp-lo: #232b31; --ramp-mid: #3490be; --ramp-hi: #c3e4f5;
+    --ramp2-lo: #33201f; --ramp2-mid: #c42a43; --ramp2-hi: #f6c3cc;
+    --na: #262626; --good: #4fbf6f; --bad: #e8455e;
+    --on-accent: #ffffff;
     --shadow: none;
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --page: #0f0f0e; --surface: #1a1a19; --surface-2: #242422;
-  --ink: #f0efec; --ink-2: #c3c2b7; --muted: #8f8d86;
-  --grid: #2c2c2a; --axis: #45453f; --border: rgba(255,255,255,0.10);
-  --accent: #e0726b; --accent-soft: #3a2220;
-  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500;
-  --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767;
-  --dem: #3987e5; --rep: #e66767; --ind: #199e70;
-  --c1: #d0504c; --c2: #7d3a37; --c3: #34598a; --c4: #5a9be8;
-  --na: #2a2a28; --good: #0ca30c; --bad: #e66767;
+  --page: #0e0e0e; --surface: #181818; --surface-2: #222222;
+  --ink: #ededed; --ink-2: #b4b4b4; --muted: #8c8c8c;
+  --grid: #2a2a2a; --axis: #474747; --border: rgba(255,255,255,0.10);
+  --div-neg: #d0566f; --div-mid: #2c2c2c; --div-pos: #3490be;
+  --accent: #e8455e; --accent-soft: #3a1c22; --accent-bg: #cc0033;
+  --s1: #3490be; --s2: #d37903; --s3: #16957b; --s4: #c42a43;
+  --s5: #83a339; --s6: #9d5d95; --s7: #b48c08; --s8: #cf5468;
+  --dem: #3490be; --rep: #c42a43; --ind: #d37903;
+  --c1: #c42a43; --c2: #6b2d38; --c3: #26495f; --c4: #3490be;
+  --ramp-lo: #232b31; --ramp-mid: #3490be; --ramp-hi: #c3e4f5;
+  --ramp2-lo: #33201f; --ramp2-mid: #c42a43; --ramp2-hi: #f6c3cc;
+  --na: #262626; --good: #4fbf6f; --bad: #e8455e;
+  --on-accent: #ffffff;
   --shadow: none;
 }
 * { box-sizing: border-box; }
@@ -122,10 +141,8 @@ select:focus-visible, button:focus-visible, input:focus-visible { outline: 2px s
 .help-panel { flex-basis: 100%; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: var(--ink-2); max-width: 900px; }
 .help-panel p { margin: 0 0 8px; }
 .help-panel b { color: var(--ink); }
-.site-link { display: inline-flex; align-items: center; gap: 6px; background: var(--accent); color: #fff; text-decoration: none; font-weight: 600; font-size: 13px; padding: 6px 12px; border-radius: 8px; white-space: nowrap; }
-.site-link:hover { filter: brightness(1.1); }
-:root[data-theme="dark"] .site-link { color: #1a1a19; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .site-link { color: #1a1a19; } }
+.site-link { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-bg); color: var(--on-accent); text-decoration: none; font-weight: 600; font-size: 13px; padding: 6px 12px; border-radius: 8px; white-space: nowrap; }
+.site-link:hover { filter: brightness(1.08); }
 
 /* ---------- layout ---------- */
 main { max-width: 1280px; margin: 0 auto; padding: 8px 24px 48px; }
@@ -278,9 +295,9 @@ footer { max-width: 1280px; margin: 0 auto; padding: 0 24px 32px; color: var(--m
     <button class="info-btn" id="covid-help-btn" aria-expanded="false" aria-controls="covid-help">What does this mean?</button>
   </div>
   <div class="help-panel" id="covid-help" hidden>
-    <p><b>The trust question changed wording in mid-2022.</b> From April 2020 to mid-2022, CHIP50 asked: &ldquo;How much do you trust the following people and organizations <i>to do the right thing to best handle the current coronavirus (COVID-19) outbreak</i>?&rdquo; Since mid-2022 it asks how much people trust them <i>&ldquo;to do what is right.&rdquo;</i> The answer options stayed the same: a lot, some, not too much, not at all.</p>
-    <p><b>Why it matters.</b> The earlier question is about the pandemic, so its answers are not directly comparable with the later, general question. Trust in public health agencies, for example, partly reflected how people judged the pandemic response. The page therefore never joins the two into one line: the COVID-19 wording is drawn as a dashed line, the current wording as a solid line, and a marker shows where the wording changed. Both were asked in the same survey in June to August 2022 (W23), so you can see how much the wording itself moves the answers.</p>
-    <p><b>What the box does.</b> Unticked (the default), charts show both wordings, so trends reach back to April 2020. Ticked, only the current wording is used and everything starts in mid-2022. For a survey period from before mid-2022, the COVID-19 wording is the only one there is.</p>
+    <p><b>The trust question changed wording in 2022.</b> From April 2020 to September 2022 (W1 to W24), CHIP50 asked: &ldquo;How much do you trust the following people and organizations <i>to do the right thing to best handle the current coronavirus (COVID-19) outbreak</i>?&rdquo; Since October 2022 (W25 on) it asks how much people trust them <i>&ldquo;to do what is right.&rdquo;</i> The answer options stayed the same: a lot, some, not too much, not at all.</p>
+    <p><b>Why it matters.</b> The earlier question is about the pandemic, so its answers are not directly comparable with the later, general question. Trust in public health agencies, for example, partly reflected how people judged the pandemic response. The page therefore never joins the two into one line: the COVID-19 wording is drawn as a dashed line, the current wording as a solid line, and a marker shows where the wording changed. In June to August 2022 (W23) the two wordings were asked side by side, each to about half of the sample, so that survey shows how much the wording itself moves the answers; the next survey (W24) used the COVID-19 wording only.</p>
+    <p><b>What the box does.</b> Unticked (the default), charts show both wordings, so trends reach back to April 2020. Ticked, only the current wording is used and everything starts in June 2022. For a survey period from before June 2022, the COVID-19 wording is the only one there is.</p>
     <button class="info-btn" id="covid-help-close">Close</button>
   </div>
 </div>
@@ -299,7 +316,7 @@ footer { max-width: 1280px; margin: 0 auto; padding: 0 24px 32px; color: var(--m
       </div>
       <div class="legend" id="sb-legend"></div>
       <div class="sb" id="scoreboard"></div>
-      <div class="note" style="margin-top:8px">Click an institution to see its trend. The change column compares with a year earlier: the survey closest to a year before, or the previous year when a whole year is pooled. Sparklines show every survey since 2020 on the same wording.</div>
+      <div class="note" style="margin-top:8px">Click an institution to see its trend. The change column compares with a year earlier: the survey closest to a year before, or the previous year when a whole year is pooled. Sparklines show every survey since 2020, each on its own vertical scale (hover for the range); the COVID-19 wording is dashed.</div>
       <div class="chart-table" data-table="scoreboard"></div>
     </div>
   </section>
@@ -594,10 +611,12 @@ function versionFor(waveKs, inst) {
 function estimate(waveKs, inst, f, d, g, ver) {
   const v = ver ?? versionFor(waveKs, inst);
   if (v == null) return null;
-  // A pooled period the builder summed: read its cell. (Only cells reliable enough to show
-  // are in the page, so the single surveys alone could not rebuild every pooled figure.)
-  const pk = waveKs.length > 1 ? POOLK.get(poolSig(waveKs)) : null;
-  if (pk != null) {
+  // A pooled period the builder summed: read its cell. Only cells reliable enough to show
+  // are in the page, so the single surveys alone could not rebuild a pooled figure without
+  // bias: a set of surveys the builder did not pool gives no estimate.
+  if (waveKs.length > 1) {
+    const pk = POOLK.get(poolSig(waveKs));
+    if (pk == null) return null;
     const r = IDX.get(key(pk, inst, v, f, d, g));
     const e = r == null ? null : pool([r]);
     if (e) { e.version = v; e.waves = waveKs.filter(w => IDX.has(key(w, inst, v, 0, 0, 0))).length; }
@@ -647,8 +666,20 @@ function comparisonFor(p) {
   if (Math.abs(sorted[0].mid - target) > 150 * DAY) return null;
   return sorted.slice(0, n).map(w => w.k);
 }
-const periodText = p => p.kind === "wave" ? `W${WAVES[p.waves[0]].wave}, ${d3.timeFormat("%B %Y")(WAVES[p.waves[0]].mid)}` :
-  p.kind === "year" ? `all ${p.waves.length} surveys of ${p.year}` : `the latest ${p.waves.length} surveys (${d3.timeFormat("%b %Y")(WAVES[p.waves[0]].mid)} to ${d3.timeFormat("%b %Y")(WAVES[p.waves.at(-1)].mid)})`;
+const periodText = p => (p.kind === "wave" ? `W${WAVES[p.waves[0]].wave}, ${d3.timeFormat("%B %Y")(WAVES[p.waves[0]].mid)}` :
+  p.kind === "year" ? `all ${p.waves.length} surveys of ${p.year}` : `the latest ${p.waves.length} surveys (${d3.timeFormat("%b %Y")(WAVES[p.waves[0]].mid)} to ${d3.timeFormat("%b %Y")(WAVES[p.waves.at(-1)].mid)})`) + ", " + periodN(p);
+
+// Respondents in a period: everyone the surveys kept, and, with a party chosen, how many
+// of them are in it (the most who answered any one trust item, survey by survey).
+function periodN(p) {
+  const total = d3.sum(p.waves, k => WAVES[k].n);
+  let txt = `n = ${total.toLocaleString()}`;
+  if (S.filter) {
+    const inParty = d3.sum(p.waves, k => d3.max(INSTS, i => d3.max([V_GEN, V_COV], v => { const r = IDX.get(key(k, i.j, v, S.filter, 0, 0)); return r == null ? 0 : C.n[r]; })));
+    txt += ` (${inParty.toLocaleString()} ${filterWord()})`;
+  }
+  return txt;
+}
 
 function writeHash() {
   const q = new URLSearchParams();
@@ -688,6 +719,14 @@ const fmtD = x => { if (x == null || isNaN(x)) return ""; const r = Math.round(x
 const unit = () => M().unit === "%" ? "%" : "";
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+// Text color for a label sitting on a fill: the palette's dark ink on light fills, white
+// on dark ones (relative luminance, WCAG).
+function inkOn(fill) {
+  const c = d3.rgb(fill); if (!c || isNaN(c.r)) return css("--ink");
+  const lin = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
+  const L = 0.2126 * lin(c.r) + 0.7152 * lin(c.g) + 0.0722 * lin(c.b);
+  return (L + 0.05) / 0.05 > 1.05 / (L + 0.05) ? "#13233a" : "#ffffff";
+}
 const SLOTS = ["--s1", "--s2", "--s3", "--s4", "--s5", "--s6", "--s7", "--s8"];
 const PARTY = { "Democrat": "--dem", "Republican": "--rep", "Independent/Other": "--ind" };
 const FILTER_LABELS = ["Everyone", "Democrats", "Republicans", "Independents"];
@@ -878,22 +917,25 @@ function lineChart(host, series, opts = {}) {
   const line = d3.line().x(p => x(p.x)).y(p => y(p.y)).defined(p => p.y != null);
   const area = d3.area().x(p => x(p.x)).y0(p => y(p.lo)).y1(p => y(p.hi));
   const plot = svg.append("g");
-  series.forEach(s => {
+  // Highlighted series (s.bold) are drawn last, so they sit on top of the rest.
+  series.slice().sort((a, b) => (a.bold ? 1 : 0) - (b.bold ? 1 : 0)).forEach(s => {
+    s._g = plot.append("g");
     // Break each series where the wording changes, so the two never join.
     const parts = d3.groups(s.points, p => p.ver).map(([, pts]) => pts);
     parts.forEach(pts => {
       const dashed = pts[0].ver === V_COV;
-      if (opts.ci && pts.length > 1) plot.append("path").attr("d", area(pts)).attr("fill", s.color).attr("fill-opacity", 0.12);
-      plot.append("path").attr("d", line(pts)).attr("fill", "none").attr("stroke", s.color).attr("stroke-width", s.bold ? 2.5 : 2)
+      if (opts.ci && pts.length > 1) s._g.append("path").attr("d", area(pts)).attr("fill", s.color).attr("fill-opacity", 0.12);
+      s._g.append("path").attr("class", "ln").attr("d", line(pts)).attr("fill", "none").attr("stroke", s.color).attr("stroke-width", s.bold ? 2.5 : (s.thin ? 1.2 : 2))
         .attr("stroke-dasharray", dashed ? "5 3" : null).attr("stroke-linejoin", "round");
-      plot.selectAll(null).data(pts).join("circle").attr("cx", p => x(p.x)).attr("cy", p => y(p.y)).attr("r", pts.length > 30 ? 2.2 : 3.2)
+      if (!s.thin) s._g.selectAll(null).data(pts).join("circle").attr("cx", p => x(p.x)).attr("cy", p => y(p.y)).attr("r", pts.length > 30 ? 2.2 : 3.2)
         .attr("fill", s.color).attr("stroke", css("--surface")).attr("stroke-width", 1.5);
     });
   });
 
-  // Direct labels at the right end, pushed apart so they never overlap.
+  // Direct labels at the right end, pushed apart so they never overlap. Series marked
+  // `thin` (the background lines of the all-institutions chart) get no label.
   if (labelW) {
-    const ends = series.map(s => { const p = s.points.at(-1); return { s, y: y(p.y), x: x(p.x), v: p.y }; }).sort((a, b) => a.y - b.y);
+    const ends = series.filter(s => !s.thin).map(s => { const p = s.points.at(-1); return { s, y: y(p.y), x: x(p.x), v: p.y }; }).sort((a, b) => a.y - b.y);
     const gap = 15;
     for (let k = 1; k < ends.length; k++) if (ends[k].y - ends[k - 1].y < gap) ends[k].y = ends[k - 1].y + gap;
     const over = ends.length ? ends.at(-1).y - (H - m.b) : 0;
@@ -919,13 +961,25 @@ function lineChart(host, series, opts = {}) {
       const t = +x.invert(mx);
       const near = xs.reduce((a, b) => Math.abs(b - t) < Math.abs(a - t) ? b : a, xs[0]);
       cross.attr("x1", x(near)).attr("x2", x(near)).style("display", null);
-      const rows = series.map(s => ({ s, p: s.points.find(p => +p.x === near) })).filter(r => r.p).sort((a, b) => b.p.y - a.p.y);
+      let rows = series.map(s => ({ s, p: s.points.find(p => +p.x === near) })).filter(r => r.p).sort((a, b) => b.p.y - a.p.y);
       if (!rows.length) return;
+      // Nearest-line mode: light up the line closest to the pointer, name only that one.
+      if (opts.nearest) {
+        const my = d3.pointer(ev)[1];
+        const hit = rows.reduce((a, b) => Math.abs(y(b.p.y) - my) < Math.abs(y(a.p.y) - my) ? b : a);
+        series.forEach(s => { if (!s.bold) s._g.selectAll("path.ln").attr("stroke", s === hit.s ? css("--ink") : s.color).attr("stroke-width", s === hit.s ? 2.2 : 1.2); });
+        if (!hit.s.bold) hit.s._g.raise();
+        rows = [hit, ...rows.filter(r => r.s.bold && r !== hit)];
+      }
       const w = WAVES[rows[0].p.w];
       const head = `${d3.timeFormat("%B %Y")(new Date(near))} <span class="mut">· W${w.wave}</span>`;
       showTip(`<div class="tt-h">${head}</div><table>${rows.map(r => `<tr><td><span class="dot" style="background:${r.s.color}"></span>${esc(r.s.label)}${r.p.ver === V_COV ? ' <span class="mut">(COVID wording)</span>' : ""}</td><td class="num">${(opts.fmt || fmt0)(r.p.y)}${opts.unit ?? unit()}</td><td class="mut">${opts.noMoe ? "" : "±" + Math.round(r.p.hi - r.p.y)}</td><td class="mut">n=${r.p.e.n.toLocaleString()}</td></tr>`).join("")}</table>`, ev);
     })
-    .on("mouseleave touchend", () => { cross.style("display", "none"); hideTip(); });
+    .on("mouseleave touchend", () => {
+      cross.style("display", "none"); hideTip();
+      if (opts.nearest) series.forEach(s => { if (!s.bold) s._g.selectAll("path.ln").attr("stroke", s.color).attr("stroke-width", 1.2); });
+    })
+    .on("click", ev => { if (opts.onPick) { const r = series.find(s => s._g.selectAll("path.ln").attr("stroke") === css("--ink")); if (r) opts.onPick(r); } });
   return svg.node();
 }
 const trunc = (s, n) => s.length > n ? s.slice(0, n - 1) + "…" : s;
@@ -1050,6 +1104,10 @@ function sparkline(inst) {
   d3.groups(pts, p => p.ver).forEach(([v, ps]) => svg.append("path").attr("d", line(ps)).attr("fill", "none").attr("stroke", css("--ink-2")).attr("stroke-width", 1.3).attr("stroke-dasharray", v === V_COV ? "3 2" : null));
   const last = pts.at(-1);
   svg.append("circle").attr("cx", x(last.x)).attr("cy", yy(last.y)).attr("r", 2.5).attr("fill", css("--accent"));
+  // The vertical scale is this institution's own range, so a small change can look large:
+  // the range is given on hover.
+  const lo = pts.reduce((a, b) => b.y < a.y ? b : a), hi = pts.reduce((a, b) => b.y > a.y ? b : a);
+  svg.append("title").text(`${inst.short}: from ${fmt0(lo.y)}${unit()} (W${WAVES[lo.w].wave}) to ${fmt0(hi.y)}${unit()} (W${WAVES[hi.w].wave}); latest ${fmt0(last.y)}${unit()}`);
   return svg.node();
 }
 
@@ -1087,10 +1145,14 @@ function goTrend(instKey) {
 }
 
 function renderTrends() {
-  seg($("tr-mode"), [["insts", "Institutions"], ["groups", "Groups"]], S.trMode, v => { S.trMode = v; renderAll(); });
-  const groupsMode = S.trMode === "groups";
-  $("tr-inst-ctl").style.display = groupsMode ? "" : "none";
+  seg($("tr-mode"), [["insts", "Institutions"], ["groups", "Groups"], ["all", "All, one chart"], ["grid", "All, grid"]], S.trMode, v => { S.trMode = v; renderAll(); });
+  const groupsMode = S.trMode === "groups", allMode = S.trMode === "all", gridMode = S.trMode === "grid";
+  $("tr-inst-ctl").style.display = groupsMode || allMode ? "" : "none";
+  $("tr-inst-ctl").querySelector("label").textContent = allMode ? "Highlight" : "Institution";
   $("tr-dim-ctl").style.display = groupsMode ? "" : "none";
+  $("tr-add-ctl").style.display = allMode || gridMode ? "none" : "";
+  $("tr-ci").parentElement.style.display = allMode || gridMode ? "none" : "";
+  $("tr-events").parentElement.style.display = gridMode ? "none" : "";
   fillSelect($("tr-inst"), instOptions(hasData), S.trInst);
   const dimOpts = DIMS.filter(d => d.key !== "all" && !(S.filter && d.key === "party")).map(d => ({ value: d.key, label: d.label }));
   if (S.filter && S.trDim === "party") S.trDim = "ideology";
@@ -1100,6 +1162,36 @@ function renderTrends() {
   const host = $("trend-chart");
   let series = [], title = "", desc = "";
   const chips = $("tr-chips"); chips.innerHTML = "";
+
+  // Every institution at once: one chart of gray lines with one highlighted, or a grid of
+  // small charts on a shared scale.
+  if (allMode || gridMode) {
+    const every = INSTS.filter(hasData).map(inst => ({ inst, pts: seriesPoints(inst.j, f, 0, 0, vers) })).filter(x => x.pts.length);
+    const who = S.filter ? FILTER_LABELS[S.filter] : "All adults";
+    $("tr-legend").innerHTML = ""; $("tr-note").textContent = S.covid ? "Dashed: the COVID-19 wording, April 2020 to September 2022. Solid: “to do what is right,” since June 2022." : "";
+    const tableOf = list => ({ cols: ["Institution", "Wave", "Fielded (median date)", "Wording", M().label, "Margin of error", "Respondents"],
+      rows: list.flatMap(({ inst, pts }) => pts.map(p => [inst.label, WAVES[p.w].wave, d3.timeFormat("%Y-%m-%d")(p.x), VERS[p.ver].label, +p.y.toFixed(1), +(p.hi - p.y).toFixed(1), p.e.n])) });
+    if (gridMode) {
+      $("tr-title").textContent = `${M().label}: all ${every.length} institutions`;
+      $("tr-desc").textContent = `${who}. One small chart per institution, all on the same scale. Click one to open it in the big chart.`;
+      const svg0 = renderTrendGrid(host, every);
+      $("tr-headline").innerHTML = gridHeadline(every);
+      registerCard("trend", tableOf(every), svg0, `${M().label}: all institutions`);
+      return;
+    }
+    if (!every.some(x => x.inst.key === S.trInst)) S.trInst = every[0].inst.key;
+    series = every.map(({ inst, pts }) => inst.key === S.trInst
+      ? { id: inst.key, label: inst.short, color: css("--accent"), bold: true, points: pts }
+      : { id: inst.key, label: inst.short, color: css("--axis"), thin: true, points: pts });
+    $("tr-title").textContent = `${M().label}: all ${every.length} institutions`;
+    $("tr-desc").textContent = `${who}. Hover over a line to name it; click it, or pick one under “Highlight”, to bring it forward.`;
+    $("tr-legend").innerHTML = `<span><span class="ln" style="border-color:${css("--accent")}"></span>${esc(INSTK[S.trInst].short)}</span><span><span class="ln" style="border-color:${css("--axis")}"></span>The other institutions</span>`;
+    const svg1 = lineChart(host, series, { ci: false, events: S.events, covidBreak: covidBreakDate(), nearest: true, labelW: 150, aria: "All institutions",
+      onPick: s => { S.trInst = s.id; renderAll(); } });
+    $("tr-headline").innerHTML = trendHeadline(series.filter(s => s.bold));
+    registerCard("trend", tableOf(every), svg1, `${M().label}: all institutions`);
+    return;
+  }
 
   if (!groupsMode) {
     S.trInsts = S.trInsts.filter(k => INSTK[k] && hasData(INSTK[k]));
@@ -1113,7 +1205,7 @@ function renderTrends() {
     }).filter(s => s.points.length);
     const firstX = d3.min(series, s => s.points[0]?.x);
     title = `${M().label}${firstX ? ", " + firstX.getFullYear() + " to " + WAVES.at(-1).mid.getFullYear() : ""}`;
-    desc = `${S.filter ? FILTER_LABELS[S.filter] : "All adults"}. Each point is one survey of about 20,000 to 45,000 people.`;
+    desc = `${S.filter ? FILTER_LABELS[S.filter] : "All adults"}. Each point is one survey of ${Math.round(d3.min(WAVES, w => w.n) / 1000)},000 to ${Math.round(d3.max(WAVES, w => w.n) / 1000)},000 people.`;
   } else {
     const inst = INSTK[S.trInst], dim = DIMK[S.trDim];
     const isState = dim.key === "state";
@@ -1138,21 +1230,78 @@ function renderTrends() {
     }
     series = series.filter(s => s.points.length);
     title = `Trust in ${lowerFirst(inst.label)}, by ${dim.label.toLowerCase()}`;
-    desc = `${M().label}${S.filter ? ", " + FILTER_LABELS[S.filter].toLowerCase() + " only" : ""}.${isState ? " State estimates use state weights; a state is left out of a survey where its effective sample is below " + MIN_N + "." : ""}`;
+    desc = `${M().label}${S.filter ? ", " + FILTER_LABELS[S.filter] + " only" : ""}.${isState ? " State estimates use state weights; a state is left out of a survey where its effective sample is below " + MIN_N + "." : ""}`;
   }
   $("tr-title").textContent = title; $("tr-desc").textContent = desc;
   $("tr-legend").innerHTML = series.map(s => `<span><span class="ln" style="border-color:${s.color}"></span>${esc(s.label)}</span>`).join("") +
     (S.covid ? `<span><span class="ln" style="border-color:${css("--muted")};border-top-style:dashed"></span>COVID-19 wording</span>` : "");
   const svg = lineChart(host, series, { ci: S.ci, events: S.events, covidBreak: covidBreakDate(), aria: title });
   $("tr-headline").innerHTML = trendHeadline(series);
-  $("tr-note").textContent = S.covid ? "Dashed lines: 2020 to mid-2022, the question asked how much people trusted each to handle the COVID-19 outbreak. Solid lines: since mid-2022, to do what is right. Both were asked in June to August 2022 (W23)." :
-    "Since mid-2022 the question asks how much people trust each “to do what is right.” Untick “Exclude the 2020–22 COVID wording” above to add the earlier series.";
+  $("tr-note").textContent = S.covid ? "Dashed lines: April 2020 to September 2022 (W1 to W24), the question asked how much people trusted each to handle the COVID-19 outbreak. Solid lines: to do what is right, asked to half the sample in June to August 2022 (W23) and to everyone since October 2022 (W25)." :
+    "Since June 2022 the question asks how much people trust each “to do what is right.” Untick “Exclude the 2020–22 COVID wording” above to add the earlier series.";
   registerCard("trend", {
     cols: ["Series", "Wave", "Fielded (median date)", "Wording", M().label, "Margin of error", "% A lot", "% Some", "% Not too much", "% Not at all", "Respondents"],
     rows: series.flatMap(s => s.points.map(p => [s.label, WAVES[p.w].wave, d3.timeFormat("%Y-%m-%d")(p.x), VERS[p.ver].label, +p.y.toFixed(1), +(p.hi - p.y).toFixed(1), +(100 * p.e.p[3]).toFixed(1), +(100 * p.e.p[2]).toFixed(1), +(100 * p.e.p[1]).toFixed(1), +(100 * p.e.p[0]).toFixed(1), p.e.n]))
   }, svg, title);
 }
 const lowerFirst = s => /^(The|Your) /.test(s) ? s[0].toLowerCase() + s.slice(1) : s;
+
+// Small multiples: one little chart per institution, grouped by type, every chart on the
+// same x and y scales so heights and slopes compare directly. Returns an SVG for export
+// (the institutions' latest values as ranked bars).
+function renderTrendGrid(host, every) {
+  host.innerHTML = "";
+  const allPts = every.flatMap(x => x.pts);
+  const xd = d3.extent(allPts, p => p.x);
+  const dom = M().dom;
+  const yd = [Math.max(dom[0], Math.floor((d3.min(allPts, p => p.y) - 2) / 10) * 10), Math.min(dom[1], Math.ceil((d3.max(allPts, p => p.y) + 2) / 10) * 10)];
+  const cats = d3.groups(every, x => x.inst.cat);
+  cats.forEach(([cat, list]) => {
+    host.append(el("div", { class: "sb-cat", style: "margin:14px 0 6px" }, cat));
+    const grid = el("div", { style: "display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px" });
+    host.append(grid);
+    list.slice().sort((a, b) => b.pts.at(-1).y - a.pts.at(-1).y).forEach(({ inst, pts }) => {
+      const cur = pts.filter(p => p.ver === V_GEN), last = pts.at(-1);
+      const base = cur.length > 1 ? cur[0] : null;
+      const d = base ? last.y - base.y : null;
+      const card = el("div", { class: "card", style: "padding:8px 10px;cursor:pointer;box-shadow:none", tabindex: 0, role: "button", title: `Open ${inst.label} in the big chart`,
+        onclick: () => { S.trMode = "insts"; S.trInsts = [inst.key, ...S.trInsts.filter(k => k !== inst.key)].slice(0, 8); renderAll(); },
+        onkeydown: ev => { if (ev.key === "Enter") ev.currentTarget.click(); } });
+      card.append(el("div", { style: "display:flex;justify-content:space-between;align-items:baseline;gap:6px" },
+        el("span", { style: "font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" }, inst.short),
+        el("span", { style: "font-size:15px;font-weight:600" }, fmt0(last.y) + unit())));
+      grid.append(card);
+      const W = Math.max(150, card.clientWidth - 20), H = 64;
+      const x = d3.scaleTime().domain(xd).range([2, W - 4]), y = d3.scaleLinear().domain(yd).range([H - 3, 4]);
+      const svg = d3.create("svg").attr("width", W).attr("height", H);
+      // Two faint reference lines: the scale's middle and its bottom.
+      [yd[0], (yd[0] + yd[1]) / 2].forEach(v => svg.append("line").attr("x1", 0).attr("x2", W).attr("y1", y(v)).attr("y2", y(v)).attr("stroke", css("--grid")));
+      const line = d3.line().x(p => x(p.x)).y(p => y(p.y));
+      d3.groups(pts, p => p.ver).forEach(([v, ps]) => svg.append("path").attr("d", line(ps)).attr("fill", "none").attr("stroke", css("--s1")).attr("stroke-width", 1.6).attr("stroke-dasharray", v === V_COV ? "3 2" : null));
+      svg.append("circle").attr("cx", x(last.x)).attr("cy", y(last.y)).attr("r", 2.8).attr("fill", css("--accent"));
+      card.append(svg.node());
+      card.append(el("div", { style: `font-size:11.5px;color:${d == null || Math.abs(d) < 1 ? "var(--muted)" : (S.metric === "none" ? d < 0 : d > 0) ? "var(--good)" : "var(--bad)"}` },
+        d == null ? "–" : stillAsked(last) ? `${fmtD(d)} since ${d3.timeFormat("%b %Y")(base.x)}` : `${fmtD(d)}, ${d3.timeFormat("%b %Y")(base.x)} to ${d3.timeFormat("%b %Y")(last.x)} (last asked)`));
+      card.addEventListener("mousemove", ev => showTip(`<div class="tt-h">${esc(inst.label)}</div>${base ? `${d3.timeFormat("%B %Y")(base.x)}: ${fmt0(base.y)}${unit()}<br>` : ""}${d3.timeFormat("%B %Y")(last.x)}: ${fmt0(last.y)}${unit()} ±${Math.round(last.hi - last.y)}`, ev));
+      card.addEventListener("mouseleave", hideTip);
+    });
+  });
+  host.append(el("div", { class: "note", style: "margin-top:10px" }, `Every small chart runs from ${d3.timeFormat("%b %Y")(xd[0])} to ${d3.timeFormat("%b %Y")(xd[1])} on the same scale, ${fmt0(yd[0])}${unit()} to ${fmt0(yd[1])}${unit()}; the faint lines mark the bottom and the middle. The change is since the first survey with the current wording.`));
+  return rankedBars(every.map(x => ({ label: x.inst.label, v: x.pts.at(-1).y })).sort((a, b) => b.v - a.v), 620, { labW: 220 });
+}
+
+// Still asked: the institution's last point is within a year of the latest survey.
+const stillAsked = p => +WAVES.at(-1).mid - +p.x < 365 * DAY;
+
+// The grid's sentence: the biggest falls and rises on the current wording, among the
+// institutions still asked.
+function gridHeadline(every) {
+  const ch = every.map(({ inst, pts }) => { const c = pts.filter(p => p.ver === V_GEN); return c.length > 1 && stillAsked(c.at(-1)) ? { inst, d: c.at(-1).y - c[0].y, a: c[0] } : null; }).filter(Boolean).sort((a, b) => a.d - b.d);
+  if (!ch.length) return "";
+  const list = xs => xs.map(x => `<b>${esc(x.inst.short)}</b> (${fmtD(x.d)})`).join(", ");
+  const falls = ch.filter(x => x.d <= -3).slice(0, 3), rises = ch.filter(x => x.d >= 3).reverse().slice(0, 3);
+  return `Since each was first asked with the current wording (June 2022 for most): ${falls.length ? "the largest falls are " + list(falls) : "no institution fell by 3 points or more"}; ${rises.length ? "the largest rises, " + list(rises) : "none rose by 3 points or more"}.`;
+}
 
 // A sentence on what the chart shows: the change from the first to the last point on
 // the current wording, for the series that moved most, or the gap between two groups.
@@ -1187,7 +1336,7 @@ function renderWho() {
   const inst = INSTK[S.whInst];
   const all = estimate(p.waves, inst.j, f, 0, 0);
   $("wh-title").textContent = `Who trusts ${lowerFirst(inst.label)}?`;
-  $("wh-desc").textContent = `${M().label}${f ? ", " + FILTER_LABELS[f].toLowerCase() + " only" : ""}; ${periodText(p)}.${all && all.version === V_COV ? " COVID-19 wording." : ""}`;
+  $("wh-desc").textContent = `${M().label}${f ? ", " + FILTER_LABELS[f] + " only" : ""}; ${periodText(p)}.${all && all.version === V_COV ? " COVID-19 wording." : ""}`;
   $("wh-who").textContent = filterWord();
   const grid = $("wh-grid"); grid.innerHTML = ""; $("wh-dist").innerHTML = ""; $("wh-headline").innerHTML = ""; $("wh-legend").innerHTML = "";
   if (!shown(all)) { grid.innerHTML = `<div class="empty">No estimate for ${esc(inst.label)} in this period. Pick another period${S.covid ? "" : ", or untick “Exclude the 2020–22 COVID wording”"}.</div>`; registerCard("who", { cols: [], rows: [] }, null, ""); return; }
@@ -1197,7 +1346,7 @@ function renderWho() {
   const cats = ["Not at all", "Not too much", "Some", "A lot"], ccol = ["--c1", "--c2", "--c3", "--c4"];
   $("wh-legend").innerHTML = cats.map((c, k) => `<span><span class="sw" style="background:${css(ccol[k])}"></span>${c}</span>`).join("");
   const dist = el("div", { style: "display:flex;height:34px;border-radius:6px;overflow:hidden;gap:2px" });
-  all.p.forEach((q, k) => dist.append(el("div", { style: `flex:${q} 0 0;background:${css(ccol[k])};display:flex;align-items:center;justify-content:center;color:${k === 1 || k === 2 ? "#0b0b0b" : "#fff"};font-size:13px;font-weight:600;min-width:0;overflow:hidden` }, q > 0.06 ? Math.round(100 * q) + "%" : "")));
+  all.p.forEach((q, k) => dist.append(el("div", { style: `flex:${q} 0 0;background:${css(ccol[k])};display:flex;align-items:center;justify-content:center;color:${inkOn(css(ccol[k]))};font-size:13px;font-weight:600;min-width:0;overflow:hidden` }, q > 0.06 ? Math.round(100 * q) + "%" : "")));
   $("wh-dist").append(dist);
 
   // One small chart per breakdown.
@@ -1290,7 +1439,7 @@ function renderDivides() {
   }).filter(Boolean).sort((a, b) => b.spread - a.spread);
 
   $("dv-title").textContent = `Where ${dim.label.toLowerCase()} divides trust`;
-  $("dv-desc").textContent = `${M().label}${f ? ", " + FILTER_LABELS[f].toLowerCase() + " only" : ""}; ${periodText(p)}.`;
+  $("dv-desc").textContent = `${M().label}${f ? ", " + FILTER_LABELS[f] + " only" : ""}; ${periodText(p)}.`;
   $("dv-legend").innerHTML = dim.groups.map((g, k) => `<span><span class="sw" style="background:${groupColor(dim, k)};border-radius:50%"></span>${esc(dim.shown[k])}</span>`).join("");
 
   const host = $("divides-chart"); host.innerHTML = "";
@@ -1379,7 +1528,7 @@ function renderStates() {
   const ok = ests.filter(s => s.ok);
   const diff = S.stMode === "diff" && natV != null;
   $("st-title").textContent = `Trust in ${lowerFirst(inst.label)}, by state`;
-  $("st-desc").textContent = `${M().label}${f ? ", " + FILTER_LABELS[f].toLowerCase() + " only" : ""}; ${periodText(p)}.${nat && nat.version === V_COV ? " COVID-19 wording." : ""}`;
+  $("st-desc").textContent = `${M().label}${f ? ", " + FILTER_LABELS[f] + " only" : ""}; ${periodText(p)}.${nat && nat.version === V_COV ? " COVID-19 wording." : ""}`;
   $("st-note").textContent = `Gray states had too few respondents${f ? " in this party" : ""} in the period (an effective sample below ${MIN_N} after weighting); pooling a whole year usually fills them in. State figures use weights that match each state's own population.`;
 
   // Color scale: sequential blue for levels, diverging red-blue around the nation.
@@ -1387,15 +1536,15 @@ function renderStates() {
   if (diff) {
     const ext = d3.max(ok, s => Math.abs(s.v - natV)) || 10;
     const lim = Math.max(5, Math.ceil(ext / 5) * 5);
-    color = d3.scaleDiverging([-lim, 0, lim], t => d3.interpolateRgbBasis([css("--c1"), css("--surface-2"), css("--c4")])(t));
-    if (S.metric === "none") color = d3.scaleDiverging([-lim, 0, lim], t => d3.interpolateRgbBasis([css("--c4"), css("--surface-2"), css("--c1")])(t));
+    color = d3.scaleDiverging([-lim, 0, lim], t => d3.interpolateRgbBasis([css("--div-neg"), css("--div-mid"), css("--div-pos")])(t));
+    if (S.metric === "none") color = d3.scaleDiverging([-lim, 0, lim], t => d3.interpolateRgbBasis([css("--div-pos"), css("--div-mid"), css("--div-neg")])(t));
   } else {
     const ext = d3.extent(ok, s => s.v);
-    const ramp = S.metric === "none" ? ["#fbe3e1", "#b8322f", "#6e1210"] : ["#dbe8fb", "#5598e7", "#0d366b"];
+    const ramp = S.metric === "none" ? ["--ramp2-lo", "--ramp2-mid", "--ramp2-hi"].map(css) : ["--ramp-lo", "--ramp-mid", "--ramp-hi"].map(css);
     color = d3.scaleSequential(ext[0] == null ? [0, 1] : ext, d3.interpolateRgbBasis(ramp));
   }
   const fillOf = s => !s.ok ? css("--na") : diff ? color(s.v - natV) : color(s.v);
-  const textOf = s => { if (!s.ok) return css("--muted"); const c = d3.hsl(fillOf(s)); return c.l > 0.58 ? "#0b0b0b" : "#ffffff"; };
+  const textOf = s => s.ok ? inkOn(fillOf(s)) : css("--muted");
 
   // Tile map
   const host = $("map-chart"); host.innerHTML = "";
@@ -1460,7 +1609,7 @@ function renderStateProfile(p, nat) {
     const s0 = estimate(p.waves, i.j, f, dim.j, k, n0.version); if (!shown(s0)) return null;
     return { i, d: value(s0) - value(n0), v: value(s0), nv: value(n0), m: moe(s0) };
   }).filter(Boolean).sort((a, b) => b.d - a.d);
-  box.append(el("div", { class: "note" }, `${M().label}${f ? ", " + FILTER_LABELS[f].toLowerCase() : ""}: ${name} compared with the nation, ${periodText(p)}.`));
+  box.append(el("div", { class: "note" }, `${M().label}${f ? ", " + FILTER_LABELS[f] : ""}: ${name} compared with the nation, ${periodText(p)}.`));
   if (!rows.length) { box.append(el("p", { class: "empty" }, `Too few respondents in ${name} for this period. Try pooling a whole year.`)); return; }
   const W = Math.max(260, box.clientWidth - 4), rowH = 19, labW = 120;
   const H = rows.length * rowH + 26;
@@ -1621,11 +1770,26 @@ function referenceFor(f, k) {
   const it = at("trump"), is = at("science");
   if (it >= 0 && c.xy[it][0] < 0) c.xy = c.xy.map(([x, y]) => [-x, y]);
   if (is >= 0 && c.xy[is][1] < 0) c.xy = c.xy.map(([x, y]) => [x, -y]);
+  // Number Trump's cluster as the red slot, so the other clusters keep their colors.
+  if (it >= 0 && c.lab[it] !== TRUMP_SLOT) { const tl = c.lab[it]; c.lab = c.lab.map(l => l === tl ? TRUMP_SLOT : l === TRUMP_SLOT ? tl : l); }
+  // And government and agencies as the blue slot, when that is a cluster of its own.
+  const ig = at("state");
+  if (ig >= 0 && c.lab[ig] !== TRUMP_SLOT && c.lab[ig] !== GOV_SLOT && d3.max(c.lab) >= GOV_SLOT) { const gl = c.lab[ig]; c.lab = c.lab.map(l => l === gl ? GOV_SLOT : l === GOV_SLOT ? gl : l); }
   REF = { ...c, keyStr, pos: new Map(c.items.map((j, i) => [j, c.xy[i]])), lab: new Map(c.items.map((j, i) => [j, c.lab[i]])) };
   return REF;
 }
+// The cluster that holds Donald Trump always takes the red slot (CL_SLOTS[1]); the others
+// are matched to the reference year's clusters as before, never taking the red.
+// Likewise the cluster that holds state government (government and agencies) takes the
+// blue slot (CL_SLOTS[2]), unless it is Trump's cluster (Katya: at four clusters, blue for
+// government and mauve for science, not the reverse).
+const TRUMP_SLOT = 1, GOV_SLOT = 2;
 function matchColors(c, ref) {
   const k = d3.max(c.lab) + 1, used = new Set(), color = new Array(k);
+  const ti = INSTK.trump ? c.items.indexOf(INSTK.trump.j) : -1;
+  if (ti >= 0) { color[c.lab[ti]] = TRUMP_SLOT; used.add(TRUMP_SLOT); }
+  const gi = INSTK.state ? c.items.indexOf(INSTK.state.j) : -1;
+  if (gi >= 0 && color[c.lab[gi]] == null) { color[c.lab[gi]] = GOV_SLOT; used.add(GOV_SLOT); }
   const overlap = d3.range(k).map(g => { const counts = new Map(); c.items.forEach((j, i) => { if (c.lab[i] === g && ref && ref.lab.has(j)) counts.set(ref.lab.get(j), (counts.get(ref.lab.get(j)) || 0) + 1); }); return counts; });
   const pairs = [];
   overlap.forEach((m, g) => m.forEach((cnt, rg) => pairs.push([cnt, g, rg])));
@@ -1635,7 +1799,17 @@ function matchColors(c, ref) {
   for (let g = 0; g < k; g++) if (color[g] == null) { while (used.has(next)) next++; color[g] = next; used.add(next); }
   return color;               // slot index per cluster
 }
-const CL_SLOTS = ["--s1", "--s8", "--s3", "--s4", "--s7", "--s5", "--s2", "--s6"];
+// Cluster colors: State of the Prompt's subject hues (Katya picked this set, option 4 of
+// five) plus data-blue, ordered gold, data-red, blue, mauve, orange, teal (Katya: yellow
+// first, blue in, the dark green last so it appears only with six clusters), then green
+// and rose. Orange comes after mauve so that gold and orange, alike even to full color
+// vision, meet only at five clusters; mauve and blue are close only for red-green
+// colorblind readers. Slot 2, the red, always goes to the cluster that holds Donald Trump
+// (TRUMP_SLOT below). The clusters' labels carry identity where two colors sit close.
+// Revised (Katya: "use the other green instead of teal; and in 5 clusters ... that green
+// instead of the orange"): gold, data-red, blue, mauve, green, orange, then teal and rose.
+// Gold and green sit close (also for full color vision), so the labels matter from five on.
+const CL_SLOTS = ["--s7", "--s4", "--s1", "--s6", "--s5", "--s2", "--s3", "--s8"];
 const clColor = slot => css(CL_SLOTS[slot % 8]);
 // A cluster's name: its two most central members.
 function clusterName(c, g) {
@@ -1655,9 +1829,9 @@ function renderClusters() {
   const p = period(), f = S.filter, k = S.clK;
   const ref = referenceFor(f, k);
   const c = clusterPeriod(p.waves, f, k);
-  const who = S.filter ? FILTER_LABELS[S.filter].toLowerCase() : "all adults";
+  const who = S.filter ? FILTER_LABELS[S.filter] : "all adults";
   if (!c) {
-    host.innerHTML = `<div class="empty">Too few institutions in this period to cluster${S.covid ? "" : ". For 2020 to mid-2022, untick “Exclude the 2020–22 COVID wording”"}.</div>`;
+    host.innerHTML = `<div class="empty">Too few institutions in this period to cluster${S.covid ? "" : ". For 2020 to 2022, untick “Exclude the 2020–22 COVID wording”"}.</div>`;
     ["cl-list", "cl-heat", "cl-headline"].forEach(id => $(id).innerHTML = "");
   } else {
     const slots = matchColors(c, ref);
@@ -1787,7 +1961,7 @@ function drawHeatmap(host, c, colOf, slots) {
   const cell = Math.max(11, Math.min(24, (avail - labW - dendW - 10) / n));
   const W = dendW + labW + cell * n + 10, H = topH + cell * n + 6;
   const svg = d3.select(host).append("svg").attr("width", W).attr("height", H);
-  const color = d3.scaleDiverging([-0.6, 0, 0.8], t => d3.interpolateRgbBasis([css("--c1"), css("--surface-2"), css("--c4")])(t)).clamp(true);
+  const color = d3.scaleDiverging([-0.6, 0, 0.8], t => d3.interpolateRgbBasis([css("--div-neg"), css("--div-mid"), css("--div-pos")])(t)).clamp(true);
   const pos = new Map(order.map((idx, k) => [idx, k]));
   const x0 = dendW + labW, y0 = topH;
   // Cells
@@ -1920,7 +2094,7 @@ function setupData() {
   $("dl-columns").innerHTML = `<ul>
     <li><b>wave</b>, <b>fielded_start</b>, <b>fielded_end</b>, <b>fielded_median</b>: the CHIP50 survey wave and its fielding dates.</li>
     <li><b>institution</b>, <b>institution_type</b>: what respondents rated.</li>
-    <li><b>wording</b>: &ldquo;Do what is right&rdquo; (mid-2022 on) or &ldquo;Handle the COVID-19 outbreak&rdquo; (2020 to mid-2022). Do not join the two into one series without noting the change.</li>
+    <li><b>wording</b>: &ldquo;Do what is right&rdquo; (W23, and W25 on) or &ldquo;Handle the COVID-19 outbreak&rdquo; (W1 to W24). Do not join the two into one series without noting the change.</li>
     <li><b>respondents</b>: everyone, or one party's identifiers. <b>breakdown</b>, <b>group</b>: the subgroup (state, age, party&hellip;).</li>
     <li><b>pct_a_lot</b>, <b>pct_some</b>, <b>pct_not_too_much</b>, <b>pct_not_at_all</b>: the weighted answer shares, summing to 100.</li>
     <li><b>pct_trust</b>: a lot plus some. <b>moe_trust</b>: its 95% margin of error in points, from the effective sample size after weighting.</li>
@@ -1970,9 +2144,9 @@ function renderAbout() {
     <h2 style="margin-top:0">What this tracks</h2>
     <p>Since April 2020, the <a href="https://www.chip50.org" target="_blank" rel="noopener">CHIP50 project</a> (the Civic Health and Institutions Project, a 50-state survey) has asked Americans in every state how much they trust a set of institutions and public figures. This page draws on ${WAVES.length} survey waves from ${fmtM(first.mid)} to ${fmtM(last.mid)}, about ${Math.round(totalN / 1000).toLocaleString()},000 interviews in all.</p>
     <h2>The question</h2>
-    <p>Since mid-2022:</p><blockquote>${esc(VERS[V_GEN].wording)}</blockquote>
-    <p>From April 2020 to mid-2022:</p><blockquote>${esc(VERS[V_COV].wording)}</blockquote>
-    <p>Both offer the same answers: <i>A lot, Some, Not too much, Not at all</i>. Because the earlier wording is about the pandemic, the two series are shown separately (dashed for the COVID-19 wording) and never joined into one line. Both were asked in the same survey in June to August 2022, which shows how much the wording itself moves the answers. The list of institutions has changed over time; each appears only in the surveys that asked about it.</p>
+    <p>Since October 2022 (W25 on):</p><blockquote>${esc(VERS[V_GEN].wording)}</blockquote>
+    <p>From April 2020 to September 2022 (W1 to W24):</p><blockquote>${esc(VERS[V_COV].wording)}</blockquote>
+    <p>Both offer the same answers: <i>A lot, Some, Not too much, Not at all</i>. Because the earlier wording is about the pandemic, the two series are shown separately (dashed for the COVID-19 wording) and never joined into one line. In June to August 2022 (W23) the two wordings were asked side by side, each to about half of the sample, which shows how much the wording itself moves the answers; W24 then used the COVID-19 wording only. The list of institutions has changed over time; each appears only in the surveys that asked about it. Two surveys asked a shorter set: the ANES replication of autumn 2024 (W33.5) asked about nine institutions and did not ask ideology, and in W19 the media and technology items went to about five in six respondents.</p>
     <h2>Measures</h2>
     <ul><li><b>Trust a lot or some</b>: the share answering a lot or some.</li><li><b>Trust a lot</b>: the share answering a lot.</li><li><b>Do not trust at all</b>: the share answering not at all.</li><li><b>Net trust</b>: the share who trust (a lot or some) minus the share who do not (not too much or not at all), from &minus;100 to +100.</li></ul>
     <h2>Who is counted</h2>
